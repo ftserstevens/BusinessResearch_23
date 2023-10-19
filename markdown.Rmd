@@ -114,10 +114,10 @@ here we are able to see that there are 3 clusters something that wasn't clear fr
 
 ### t-tests
 
-figures are nice but can lead to wrong interpretations - prefer formal tests
-we know there is a difference per species in the iris df, can we verify this
-I want to compare Setosas & Virginicas & Versicolors
-I want to compare Setosas & Virginicas & Versicolors
+
+While figures are visually appealing, they can sometimes lead to misinterpretations. Therefore, I prefer to rely on formal statistical tests.
+
+In the case of the Iris dataset, it is evident that there are differences among species. let's try it out.
 
 ```{r}
 
@@ -197,7 +197,7 @@ cor(iris$Sepal.Length,iris$Sepal.Width)
 ```
 ### Regressions!
 
-Of course you know about regressions. Here we are able to do mor than simply compare 2 variables as with a correlation or a t-test.
+Of course you know about regressions. Here we are able to do more than simply compare 2 variables as with a correlation or a t-test.
 
 
 
@@ -219,11 +219,11 @@ stargazer(mod1,mod2,mod3, type = 'text')
 
 
 ```
-The last regression has the interaction between two terms. The interaction term should be interpreted as well as both components of it.
-An interactions is exactly the same as a moderation statitically speaking!
 
-For regressions the t-stats are used to get the p-values of the coefficeints, that is if they are significant cetibus paribus.
-The F-stat tells us about the goodness of out model, the R2 how much of the Variability we are able to explain with the given model.
+In regression analysis, t-statistics are utilized to determine the significance (or lack thereof) of individual coefficients, all other factors held constant. Meanwhile, the F-statistic assesses the overall model goodness-of-fit, and the R-squared (R²) quantifies how much variability the model can account for.
+
+In the case of the final regression, it incorporates an interaction term involving two variables. The interpretation of the interaction term is crucial, just as understanding the meaning of both constituent parts is. From a statistical standpoint, an interaction is essentially a form of moderation.
+
 
 ```{r echo = FALSE}
 iv_x <- 0.3
@@ -263,15 +263,18 @@ ggplot() +
 
 ```
 
-We can also do  calculate the mediation with regressions however, we now use bootstrapping to ge the Standard error (and this p-values)
-I will not do this here but we did it in class using the process package. I will however show you the intuition behind the package.
 
-Say we want to analyze the mediated effect of Petal.length on Sepal.width via Petal.Width
-So:
+Mediation analysis can also be conducted using regression methods; however, to obtain standard errors and p-values, bootstrapping is commonly employed.
 
-- IV is Petal.length
-- DV is Sepal.width
-- Mediator is Petal.Width
+I won't perform the bootstrapping here, but we covered it in class using the "process" package. Instead, I'll provide you with the underlying rationale behind the package's use.
+
+Let's consider an example where we aim to examine the mediated effect of Petal.Length on Sepal.Width, mediated through Petal.Width. In this context:
+
+- Petal.Length serves as the independent variable (IV).
+- Sepal.Width is the dependent variable (DV).
+- Petal.Width functions as the mediator.
+
+Through this mediation analysis, we explore how Petal.Length's influence on Sepal.Width is channeled via the mediator, Petal.Width.
 
 ```{r echo = FALSE}
 iv_x <- 0.3
@@ -344,4 +347,14 @@ print(paste(total_effect, 'is the total effect'))
 
 
 ```
+Mediation in statistics refers to a process where the relationship between an independent variable (IV) and a dependent variable (DV) is explained or mediated by one or more intermediate variables, often called mediators. Mediation analysis is used to understand the underlying mechanisms or pathways through which an IV influences a DV.
 
+Three linear regression models (path_c, path_a, and path_b) are constructed:
+path_c: Regresses Sepal.Width on Petal.Length.
+path_a: Regresses Petal.Width on Petal.Length.
+path_b: Regresses Sepal.Width on Petal.Length and Petal.Width.
+
+The total effect is obtained from the coefficient in path_c (Petal.Length → Sepal.Width).
+The direct effect is computed as the difference between the total effect and the indirect effect.
+
+If we were to bootstrap, we'd run this n (a large number) times and look at the distribution of out effect sizes.
