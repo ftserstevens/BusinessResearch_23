@@ -1,0 +1,347 @@
+---
+title: "basics"
+output: html_document
+date: "2023-10-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+
+### Data
+plenty of data sets are available in R; you can download them via packages.
+this is nice because it's going to work on your computer as well :p
+
+
+```{r data}
+head(iris)
+iris = iris
+
+
+```
+
+### Basic stats
+
+
+```{r pressure}
+
+mean(iris$Sepal.Width , na.rm=T) #  na.rm=T ignores missing values
+median(iris$Sepal.Width)
+sd(iris$Sepal.Width) 
+
+```
+
+You are free to use the base function but we can code this manually to better understand the formula
+
+Here it is:
+
+
+\[
+\text{Sample Variance} = \frac{1}{n-1} \sum_{i=1}^{n}(x_i - \bar{x})^2
+\]
+
+Where:
+
+- \(n\) is the number of data points.
+- \(x_i\) represents each data point.
+- \(\bar{x}\) is the mean of the data points.
+
+```{r Variance manually}
+
+variance = function(data) {
+  if(!is.vector(data)) {
+    stop("This function only works with a vector")
+    }  #error in case data is not correctly formatted
+
+  mean = mean(data, na.rm = T)
+  
+  denominator =  (length(data)-1) # (n-1) is the denominator in the variance formula.
+  numerator = sum(
+    (data-mean)**2
+  )
+  
+  return(numerator/denominator) ## aplying the formula
+}
+```
+
+\(\sigma\) is the square root of the variance so
+to the power of 1/2 is the same as square root, 1/3 cubic root etc.
+
+```{r Varaince}
+variance(iris$Sepal.Width)
+variance(iris$Sepal.Width)**(1/2) ## this is the sd.
+variance(iris$Sepal.Width)**(1/2) == sd(iris$Sepal.Width) # check if we did it correctly?
+```
+
+\(\sigma\), mean & median only tell you so much about the data
+graphs are always a nice tool
+
+
+### plots
+
+```{r base plots}
+hist(iris$Sepal.Width)
+plot(iris$Sepal.Width)
+plot(iris$Sepal.Width, iris$Sepal.Length)
+```
+
+base plots are easy but don't have tons of options
+ggplot has a bit of a learning curve but can provide paper worthy papers in minutes.
+
+```{r ggplot}
+
+ggplot( data = iris,
+        map = aes(x = Sepal.Width, y = Sepal.Length)) +
+  geom_point()
+
+
+```
+plot looks the same because we didn't use any ggplot features just yet.
+
+```{r}
+
+ggplot( data = iris,
+        map = aes(x = Sepal.Width, y = Sepal.Length, color = Species) ) + 
+  #color colors the points in their respctiv species
+  geom_jitter() + theme_classic() +xlab("Width") + ylab("Length") 
+#geom_jitter gets rid of the grid look whilst mostly not changing the data.
+```
+
+here we are able to see that there are 3 clusters something that wasn't clear from just the mean/median/sd
+
+### t-tests
+
+figures are nice but can lead to wrong interpretations - prefer formal tests
+we know there is a difference per species in the iris df, can we verify this
+I want to compare Setosas & Virginicas & Versicolors
+I want to compare Setosas & Virginicas & Versicolors
+
+```{r}
+
+setosa = iris[iris$Species == "setosa", "Sepal.Width"] # here I select the df that where the species row are equal to "setosa"
+virginica = iris[iris$Species == "virginica","Sepal.Width"] # same for viriginica
+versiclors = iris[iris$Species == "versicolor","Sepal.Width"] # same for viriginica
+
+```
+within "[]"the space before the "," refers to the rows & after to the columns
+
+```{r}
+
+t.test(setosa, mu = 3)  # this tells us that the mean is significantly different from 3
+t.test(virginica, versiclors) # 
+
+```
+Seems both groups are not siggnificantly different.
+
+
+1. **P-value**: The p-value is a measure of the evidence against a null hypothesis. It indicates the probability of observing the data (or more extreme results) if the null hypothesis were true.
+
+2. **T-statistic**: The t-statistic is a test statistic used in hypothesis testing. It quantifies the difference between the sample mean and the population mean, normalized by the standard error.
+
+3. **Degrees of Freedom (df)**: Degrees of freedom represent the number of values in the final calculation of a statistic that are free to vary. In the context of t-tests, it is related to the sample size and the assumptions of the test. The formula for degrees of freedom depends on the type of t-test (e.g., independent samples or paired samples).
+
+
+### Correlations
+
+Correlation analysis is also a nice tool to asses the relationship of 2 given variables
+Again base R functions exist for this
+
+```{r}
+cor(iris$Sepal.Length,iris$Sepal.Width)
+cor.test(iris$Sepal.Length, iris$Sepal.Width)
+```
+Reminder:
+
+\[
+\text{Pearson Correlation Coefficient (r)} = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2 \sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\]
+
+Where:
+
+- \(n\) is the number of data points.
+- \(x_i\) represents each data point in the first variable.
+- \(y_i\) represents each data point in the second variable.
+- \(\bar{x}\) is the mean of the first variable.
+- \(\bar{y}\) is the mean of the second variable.
+
+
+
+
+```{r}
+calculate_correlation <- function(x, y) {
+  # Calculate the mean of x and y
+  mean_x <- mean(x)
+  mean_y <- mean(y)
+
+  # Calculate the sum of the products of the differences
+  sum_product_diff <- sum((x - mean_x) * (y - mean_y))
+
+  # Calculate the sum of squared differences for x and y
+  sum_square_diff_x <- sum((x - mean_x)^2)
+  sum_square_diff_y <- sum((y - mean_y)^2)
+
+  # Calculate the Pearson correlation coefficient
+  correlation <- sum_product_diff / sqrt(sum_square_diff_x * sum_square_diff_y)
+
+  return(correlation)
+}
+
+calculate_correlation(iris$Sepal.Length,iris$Sepal.Width) 
+cor(iris$Sepal.Length,iris$Sepal.Width)
+
+
+
+```
+### Regressions!
+
+Of course you know about regressions. Here we are able to do mor than simply compare 2 variables as with a correlation or a t-test.
+
+
+
+```{r}
+
+library(stargazer)
+
+mod1 =lm(data = iris,
+   formula = Sepal.Width ~ Sepal.Length) 
+
+mod2 =lm(data = iris,
+   formula = Sepal.Width ~ Sepal.Length + Petal.Width)
+
+mod3 =lm(data = iris,
+   formula = Sepal.Width ~ Sepal.Length + Petal.Width * Petal.Length)
+
+
+stargazer(mod1,mod2,mod3, type = 'text')
+
+
+```
+The last regression has the interaction between two terms. The interaction term should be interpreted as well as both components of it.
+An interactions is exactly the same as a moderation statitically speaking!
+
+For regressions the t-stats are used to get the p-values of the coefficeints, that is if they are significant cetibus paribus.
+The F-stat tells us about the goodness of out model, the R2 how much of the Variability we are able to explain with the given model.
+
+```{r echo = FALSE}
+iv_x <- 0.3
+iv_y <- 0.5
+m_x <- 0.5
+m_y <- 0.8
+dv_x <- 0.7
+dv_y <- 0.5
+
+control_x1 <- (m_x + iv_x) / 2
+control_y1 <- iv_y
+control_x2 <- (m_x + dv_x) / 2
+control_y2 <- dv_y
+
+
+ggplot() +
+  theme_void() +
+  annotate("text", x = 0.5, y = 0.8, label = "Mo") +
+  annotate("text", x = 0.3, y = 0.5, label = "IV") +
+  annotate("text", x = 0.7, y = 0.5, label = "DV") +
+  xlim(c(0.2,0.8)) + ylim(c(0.3,1)) +
+  geom_segment(
+    aes(x = m_x, y = m_y -.02, xend = .5, yend = .5),
+    arrow = arrow(type = "closed", length = unit(0.2, "inches")),
+  ) +
+  geom_segment(
+    aes(x = iv_x +.02, y = iv_y, xend = dv_x-.02, yend = dv_y),
+
+    arrow = arrow(type = "closed", length = unit(0.2, "inches")),
+  ) + ggtitle('Moderation')+
+  labs(title = "Moderation") +
+  theme(plot.title = element_text(hjust = 0.5, vjust = .8))
+
+
+
+
+
+```
+
+We can also do  calculate the mediation with regressions however, we now use bootstrapping to ge the Standard error (and this p-values)
+I will not do this here but we did it in class using the process package. I will however show you the intuition behind the package.
+
+Say we want to analyze the mediated effect of Petal.length on Sepal.width via Petal.Width
+So:
+
+- IV is Petal.length
+- DV is Sepal.width
+- Mediator is Petal.Width
+
+```{r echo = FALSE}
+iv_x <- 0.3
+iv_y <- 0.5
+m_x <- 0.5
+m_y <- 0.8
+dv_x <- 0.7
+dv_y <- 0.5
+
+control_x1 <- (m_x + iv_x) / 2
+control_y1 <- iv_y
+control_x2 <- (m_x + dv_x) / 2
+control_y2 <- dv_y
+
+
+ggplot() +
+  theme_void() +
+  annotate("text", x = 0.5, y = 0.8, label = "Me") +
+  annotate("text", x = 0.3, y = 0.5, label = "IV") +
+  annotate("text", x = 0.7, y = 0.5, label = "DV") +
+  xlim(c(0.2,0.8)) + ylim(c(0.3,1)) +
+  geom_curve(
+    aes(x = iv_x + .02, y = iv_y, xend = m_x-.01, yend = m_y- .01),
+    curvature = 0,
+    arrow = arrow(type = "closed", length = unit(0.2, "inches")),
+    color = "blue"
+  ) +
+  geom_segment(
+    aes(x = m_x + .01, y = m_y -.01, xend = dv_x -.02, yend = dv_y),
+    arrow = arrow(type = "closed", length = unit(0.2, "inches")),
+    color = "red" # Adjust the arrow color
+  ) +
+  geom_segment(
+    aes(x = iv_x +.02, y = iv_y, xend = dv_x-.02, yend = dv_y),
+
+    arrow = arrow(type = "closed", length = unit(0.2, "inches")),
+    color = "green" # Adjust the arrow color
+  ) + ggtitle('mediation')+
+   annotate("text", x = 0.4, y = 0.7, label = "a") +
+  annotate("text", x = 0.6, y = 0.6, label = "b") +
+  annotate("text", x = 0.5, y = 0.45, label = "c & c'") +
+  labs(title = "Mediation") +
+  theme(plot.title = element_text(hjust = 0.5, vjust = .8))
+
+
+
+
+
+```
+
+```{r}
+path_c = lm(data = iris,
+            Sepal.Width ~ Petal.Length)
+
+path_a = lm(data = iris,
+            Petal.Width ~ Petal.Length)
+
+path_b = lm(data = iris,
+            Sepal.Width ~ Petal.Length + Petal.Width)
+
+indirect_effect = as.numeric(path_a$coefficients[2] * path_b$coefficients[3])
+total_effect = as.numeric(path_c$coefficients[2])
+direct_effect = total_effect - indirect_effect
+
+print(paste(indirect_effect, 'is the indirect effect'))
+print(paste(direct_effect, 'is the direct effect'))
+print(paste(total_effect, 'is the total effect'))
+
+
+
+
+```
+
