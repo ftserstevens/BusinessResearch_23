@@ -1,8 +1,12 @@
 ---
-title: "basics"
+title: "Basics in R & Qual'"
+author: "François"
 output: html_document
 date: "2023-10-19"
 ---
+
+**Note that this is a very basic guide - not the solution to all your stats issues! A lot of things are simplified or not touched upon!**
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -13,12 +17,13 @@ library(tidyverse)
 
 ### Data
 plenty of data sets are available in R; you can download them via packages.
-this is nice because it's going to work on your computer as well :p
+this is nice because it's going to work on your computer as well
 
 
 ```{r data}
-head(iris)
 iris = iris
+head(iris)
+
 
 
 ```
@@ -350,9 +355,10 @@ print(paste(total_effect, 'is the total effect'))
 Mediation in statistics refers to a process where the relationship between an independent variable (IV) and a dependent variable (DV) is explained or mediated by one or more intermediate variables, often called mediators. Mediation analysis is used to understand the underlying mechanisms or pathways through which an IV influences a DV.
 
 Three linear regression models (path_c, path_a, and path_b) are constructed:
-path_c: Regresses Sepal.Width on Petal.Length.
-path_a: Regresses Petal.Width on Petal.Length.
-path_b: Regresses Sepal.Width on Petal.Length and Petal.Width.
+
+- path_c: Regresses Sepal.Width on Petal.Length.
+- path_a: Regresses Petal.Width on Petal.Length.
+- path_b: Regresses Sepal.Width on Petal.Length and Petal.Width.
 
 The total effect is obtained from the coefficient in path_c (Petal.Length → Sepal.Width).
 The direct effect is computed as the difference between the total effect and the indirect effect.
