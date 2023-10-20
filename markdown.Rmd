@@ -219,10 +219,11 @@ mod3 =lm(data = iris,
    formula = Sepal.Width ~ Sepal.Length + Petal.Width * Petal.Length)
 
 mod4 =lm(data = iris,
-   formula = scale(Sepal.Width) ~ scale(Sepal.Length) +scale(Petal.Width)+ scale(Petal.Width) * scale(Petal.Length))
+   formula = scale(Sepal.Width) ~ scale(Sepal.Length) +scale(Petal.Width)+scale(Petal.Length) + 
+     scale(Petal.Width) * scale(Petal.Length))
 
 
-stargazer(mod1,mod2,mod4, type = 'text')
+stargazer(mod3,mod4, type = 'text')
 
 
 ```
