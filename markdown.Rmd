@@ -139,7 +139,6 @@ t.test(setosa, mu = 3)  # this tells us that the mean is significantly different
 t.test(virginica, versiclors) # 
 
 ```
-Seems both groups are not siggnificantly different.
 
 
 1. **P-value**: The p-value is a measure of the evidence against a null hypothesis. It indicates the probability of observing the data (or more extreme results) if the null hypothesis were true.
@@ -219,8 +218,11 @@ mod2 =lm(data = iris,
 mod3 =lm(data = iris,
    formula = Sepal.Width ~ Sepal.Length + Petal.Width * Petal.Length)
 
+mod4 =lm(data = iris,
+   formula = scale(Sepal.Width) ~ scale(Sepal.Length) +scale(Petal.Width)+ scale(Petal.Width) * scale(Petal.Length))
 
-stargazer(mod1,mod2,mod3, type = 'text')
+
+stargazer(mod1,mod2,mod4, type = 'text')
 
 
 ```
